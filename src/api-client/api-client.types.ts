@@ -76,6 +76,9 @@ export interface ApiResponse<T = unknown> {
   /** Wall-clock duration of the request in milliseconds (basis for SLA checks). */
   readonly durationMs: number;
 
+  /** Size of the response body in bytes (basis for payload-size checks). */
+  readonly sizeBytes: number;
+
   /** Final resolved request URL. */
   readonly url: string;
 

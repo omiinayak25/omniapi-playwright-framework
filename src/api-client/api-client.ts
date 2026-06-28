@@ -155,6 +155,7 @@ export class ApiClient {
       rawText,
       isJson: parsed.isJson,
       durationMs,
+      sizeBytes: Buffer.byteLength(rawText, 'utf-8'),
       url: response.url(),
       raw: response,
     };
