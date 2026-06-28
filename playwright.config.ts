@@ -35,6 +35,9 @@ export default defineConfig({
   // Root folder Playwright scans for *.spec.ts files. One sub-folder per phase.
   testDir: './tests',
 
+  // Runs once before the suite — validates config & logs the run banner (fail fast).
+  globalSetup: './src/global-setup.ts',
+
   // Per-test timeout (ms). APIs are fast, but allow slack for chained flows.
   timeout: 30_000,
 

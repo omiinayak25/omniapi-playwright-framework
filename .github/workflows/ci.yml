@@ -1,0 +1,96 @@
+# =============================================================================
+# ci.yml — OmniAPI Continuous Integration (GitHub Actions)
+# -----------------------------------------------------------------------------
+# PIPELINE:
+#   1) quality  — typecheck + lint + format check (fast static gate; fails early)
+#   2) test     — runs the suite in PARALLEL SHARDS (matrix), each uploading a
+#                 blob report; depends on `quality` passing first (quality gate).
+#   3) report   — merges shard blobs into ONE HTML report and uploads it.
+#
+# WHY THIS SHAPE:
+#   - Cheap static checks run first and block expensive test runs on failure.
+#   - Sharding cuts wall-clock time and scales to large suites.
+#   - Artifacts (reports/summary) are retained for debugging every run.
+# =============================================================================
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+
+jobs:
+  quality:
+    name: Quality gate (typecheck · lint · format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    name: Tests (shard ${{ matrix.shard }}/4)
+    needs: quality
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run tests (shard ${{ matrix.shard }}/4)
+        run: npx playwright test --shard=${{ matrix.shard }}/4 --reporter=blob
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report
+          retention-days: 7
+
+  report:
+    name: Merge & publish report
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blobs
+          pattern: blob-report-*
+          merge-multiple: true
+      - name: Merge into a single HTML report
+        run: npx playwright merge-reports --reporter=html ./all-blobs
+      - name: Upload merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report
+          retention-days: 14

@@ -1,0 +1,24 @@
+/**
+ * =============================================================================
+ * global-setup.ts — Playwright global setup (run-readiness gate)
+ * -----------------------------------------------------------------------------
+ * WHY IT EXISTS:
+ *   Runs ONCE before the whole suite. Importing the config triggers ConfigManager
+ *   validation, so a misconfigured environment fails FAST here with a clear error
+ *   — before a single test runs. It also logs a banner so CI logs record exactly
+ *   which environment/config a run used (invaluable for debugging CI failures).
+ *
+ * REGISTERED IN: playwright.config.ts -> globalSetup: './src/global-setup.ts'
+ * =============================================================================
+ */
+import { config } from './config/index.js';
+import { logger } from './utils/logger.js';
+
+export default function globalSetup(): void {
+  logger.info('OmniAPI suite starting', {
+    env: config.env,
+    baseUrl: config.baseUrl,
+    logLevel: config.logLevel,
+    ci: !!process.env.CI,
+  });
+}
