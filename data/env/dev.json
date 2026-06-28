@@ -1,0 +1,6 @@
+{
+  "environment": "dev",
+  "label": "Development",
+  "expectedMinProducts": 10,
+  "sampleProductId": 1
+}

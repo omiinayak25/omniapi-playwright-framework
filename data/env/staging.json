@@ -1,0 +1,6 @@
+{
+  "environment": "staging",
+  "label": "Staging",
+  "expectedMinProducts": 10,
+  "sampleProductId": 2
+}

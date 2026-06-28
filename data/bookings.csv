@@ -1,0 +1,4 @@
+firstname,lastname,totalprice,depositpaid,checkin,checkout,additionalneeds
+Alice,Anderson,250,true,2026-08-01,2026-08-05,Breakfast
+Bob,Brown,99,false,2026-09-10,2026-09-12,
+Carol,Clark,1200,true,2026-10-15,2026-10-20,Late checkout

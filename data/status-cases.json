@@ -1,0 +1,9 @@
+[
+  { "name": "OK", "code": 200, "ok": true },
+  { "name": "Created", "code": 201, "ok": true },
+  { "name": "Bad Request", "code": 400, "ok": false },
+  { "name": "Unauthorized", "code": 401, "ok": false },
+  { "name": "Forbidden", "code": 403, "ok": false },
+  { "name": "Not Found", "code": 404, "ok": false },
+  { "name": "Server Error", "code": 500, "ok": false }
+]
