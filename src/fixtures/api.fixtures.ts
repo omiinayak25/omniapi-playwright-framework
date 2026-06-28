@@ -37,6 +37,7 @@ import {
   BreweryService,
 } from '../services/index.js';
 import { AuthService } from '../auth/index.js';
+import { MockServer } from '../utils/mock-server.js';
 
 /** The set of clients & repositories this fixture module injects into tests. */
 export interface ApiFixtures {
@@ -62,6 +63,8 @@ export interface ApiFixtures {
   countries: GraphQLClient;
   /** GraphQL client for GraphQLZero (mutations). */
   graphqlZero: GraphQLClient;
+  /** In-process mock server + a client pointed at it (Phase 15). */
+  mock: { server: MockServer; client: ApiClient };
 }
 
 /**
@@ -136,6 +139,21 @@ export const test = base.extend<ApiFixtures>({
     await withClient(config.endpoints.graphqlZero, 'graphqlzero', (c) =>
       use(new GraphQLClient(c, '/api')),
     );
+  },
+  mock: async ({}, use) => {
+    // Start a fresh mock server per test (ephemeral port -> full isolation).
+    const server = new MockServer();
+    await server.start();
+    const context = await playwrightRequest.newContext({
+      baseURL: server.url,
+      extraHTTPHeaders: { Accept: 'application/json' },
+    });
+    try {
+      await use({ server, client: new ApiClient(context, 'mock') });
+    } finally {
+      await context.dispose();
+      await server.stop();
+    }
   },
 });
 
