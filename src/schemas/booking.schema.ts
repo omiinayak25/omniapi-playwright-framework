@@ -43,3 +43,37 @@ export const bookingSchema: SchemaObject = {
     additionalneeds: { type: 'string' }, // optional: present but not in `required`
   },
 };
+
+/**
+ * A STRICT booking schema with value constraints (lengths, ranges, date format).
+ * Used for negative/boundary testing: it rejects empty strings, nulls, wrong
+ * types, and out-of-range numbers that the permissive demo APIs would accept.
+ * This lets us test validation DETERMINISTICALLY at the contract layer.
+ */
+export const bookingStrictSchema: SchemaObject = {
+  type: 'object',
+  required: [
+    'firstname',
+    'lastname',
+    'totalprice',
+    'depositpaid',
+    'bookingdates',
+  ],
+  additionalProperties: false,
+  properties: {
+    firstname: { type: 'string', minLength: 1, maxLength: 50 },
+    lastname: { type: 'string', minLength: 1, maxLength: 50 },
+    totalprice: { type: 'integer', minimum: 1, maximum: 100000 },
+    depositpaid: { type: 'boolean' },
+    bookingdates: {
+      type: 'object',
+      required: ['checkin', 'checkout'],
+      additionalProperties: false,
+      properties: {
+        checkin: { type: 'string', format: 'date' },
+        checkout: { type: 'string', format: 'date' },
+      },
+    },
+    additionalneeds: { type: 'string' },
+  },
+};
