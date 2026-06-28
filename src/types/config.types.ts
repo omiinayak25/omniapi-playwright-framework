@@ -31,6 +31,7 @@ export interface ApiEndpoints {
   readonly jsonPlaceholder: string;
   readonly httpbin: string;
   readonly postmanEcho: string;
+  readonly openBrewery: string;
 }
 
 /** Demo credentials for the auth phases (public sandbox APIs only). */

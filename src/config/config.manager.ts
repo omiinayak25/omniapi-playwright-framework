@@ -106,6 +106,11 @@ export class ConfigManager {
         // httpbin (the canonical httpbin.org on Heroku is frequently 503/504).
         httpbin: process.env.HTTPBIN_URL ?? 'https://httpbingo.org',
         postmanEcho: process.env.POSTMAN_ECHO_URL ?? 'https://postman-echo.com',
+        // Origin only — the /v1 prefix lives in BreweryService's resource path.
+        // (A leading-slash request path against a baseURL WITH a path would drop
+        // that path per new URL() semantics — a classic baseURL pitfall.)
+        openBrewery:
+          process.env.OPEN_BREWERY_URL ?? 'https://api.openbrewerydb.org',
       },
       credentials: {
         username: process.env.BOOKER_USERNAME ?? 'admin',

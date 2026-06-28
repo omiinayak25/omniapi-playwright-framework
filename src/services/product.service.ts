@@ -45,6 +45,40 @@ export class ProductService extends BaseApiService {
     });
   }
 
+  /** SORT — GET /products?sortBy=&order= (asc|desc). */
+  public sortedBy(
+    field: string,
+    order: 'asc' | 'desc' = 'asc',
+    limit = 30,
+  ): Promise<ApiResponse<ProductList>> {
+    return this.client.get<ProductList>(this.resource, {
+      params: { sortBy: field, order, limit },
+    });
+  }
+
+  /** FILTER — GET /products/category/{category}. */
+  public byCategory(
+    category: string,
+    limit = 30,
+  ): Promise<ApiResponse<ProductList>> {
+    return this.client.get<ProductList>(
+      `${this.resource}/category/${category}`,
+      {
+        params: { limit },
+      },
+    );
+  }
+
+  /** FIELD SELECTION — GET /products?select=title,price (sparse fieldsets). */
+  public selectFields(
+    fields: readonly string[],
+    limit = 5,
+  ): Promise<ApiResponse<ProductList>> {
+    return this.client.get<ProductList>(this.resource, {
+      params: { select: fields.join(','), limit },
+    });
+  }
+
   /** CREATE — POST /products/add (DummyJSON's non-standard create path). */
   public create(product: NewProduct): Promise<ApiResponse<Product>> {
     return this.client.post<Product>(`${this.resource}/add`, {

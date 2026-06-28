@@ -34,6 +34,7 @@ import {
   PostService,
   ProductService,
   BookingService,
+  BreweryService,
 } from '../services/index.js';
 import { AuthService } from '../auth/index.js';
 
@@ -53,6 +54,8 @@ export interface ApiFixtures {
   auth: AuthService;
   /** Authenticated repository for Restful Booker /booking (Phase 7 chaining). */
   bookings: BookingService;
+  /** Repository for Open Brewery DB (Phase 10 page-based pagination). */
+  breweries: BreweryService;
 }
 
 /**
@@ -108,6 +111,11 @@ export const test = base.extend<ApiFixtures>({
   bookings: async ({}, use) => {
     await withClient(config.endpoints.booker, 'bookings', (c) =>
       use(new BookingService(c)),
+    );
+  },
+  breweries: async ({}, use) => {
+    await withClient(config.endpoints.openBrewery, 'breweries', (c) =>
+      use(new BreweryService(c)),
     );
   },
 });
