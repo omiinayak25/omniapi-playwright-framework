@@ -30,13 +30,18 @@
 import { test as base, request as playwrightRequest } from '@playwright/test';
 import { ApiClient } from '../api-client/index.js';
 import { config } from '../config/index.js';
+import { PostService, ProductService } from '../services/index.js';
 
-/** The set of clients this fixture module injects into tests. */
+/** The set of clients & repositories this fixture module injects into tests. */
 export interface ApiFixtures {
   /** Client bound to httpbin.org — the HTTP request/response inspection service. */
   httpbin: ApiClient;
   /** Client bound to postman-echo.com — echoes back requests for assertions. */
   echo: ApiClient;
+  /** Repository for JSONPlaceholder /posts (Phase 3 CRUD). */
+  posts: PostService;
+  /** Repository for DummyJSON /products (Phase 3 CRUD). */
+  products: ProductService;
 }
 
 /**
@@ -69,6 +74,17 @@ export const test = base.extend<ApiFixtures>({
   },
   echo: async ({}, use) => {
     await withClient(config.endpoints.postmanEcho, 'echo', use);
+  },
+  posts: async ({}, use) => {
+    // Build a client for JSONPlaceholder, wrap it in the repository, inject it.
+    await withClient(config.endpoints.jsonPlaceholder, 'jsonplaceholder', (c) =>
+      use(new PostService(c)),
+    );
+  },
+  products: async ({}, use) => {
+    await withClient(config.endpoints.dummyJson, 'dummyjson', (c) =>
+      use(new ProductService(c)),
+    );
   },
 });
 
