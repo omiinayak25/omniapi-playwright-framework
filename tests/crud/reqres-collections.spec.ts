@@ -20,7 +20,13 @@
  */
 import { test, expect } from '../../src/fixtures/api.fixtures.js';
 import { ApiKeyStrategy, NoAuthStrategy } from '../../src/auth/index.js';
+import { expectMatchesSchema } from '../../src/validators/index.js';
+import { reqresRecordsSchema } from '../../src/schemas/index.js';
 import { HttpStatus } from '../../src/constants/http-status.js';
+import type {
+  ReqResCollection,
+  ProductRecordData,
+} from '../../src/models/reqres.model.js';
 
 const PATH = '/api/collections/products/records';
 const PROJECT_ID = '33261';
@@ -47,12 +53,20 @@ test.describe('ReqRes collections (custom API-key example)', () => {
       'Set REQRES_API_KEY in .env (free at https://app.reqres.in/api-keys) to run this.',
     );
 
-    const res = await reqres.get(PATH, {
+    const res = await reqres.get<ReqResCollection<ProductRecordData>>(PATH, {
       params: { project_id: PROJECT_ID },
       auth: new ApiKeyStrategy('x-api-key', API_KEY as string),
     });
 
     expect(res.status).toBe(HttpStatus.OK);
-    expect(res.body).toBeTruthy();
+    // Response conforms to the declared contract.
+    expectMatchesSchema(res, reqresRecordsSchema);
+
+    // Records are present and carry the expected nested product payload.
+    expect(res.body.data.length).toBeGreaterThan(0);
+    const first = res.body.data[0];
+    expect(first?.project_id).toBe(Number(PROJECT_ID));
+    expect(typeof first?.data.name).toBe('string');
+    expect(typeof first?.data.price).toBe('number');
   });
 });
