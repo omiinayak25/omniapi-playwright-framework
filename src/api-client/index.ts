@@ -7,4 +7,12 @@ export type {
   ApiResponse,
   RequestOptions,
   QueryValue,
+  FilePayload,
+  MultipartValue,
 } from './api-client.types.js';
+export { GraphQLClient, graphqlData } from './graphql-client.js';
+export type {
+  GraphQLResponse,
+  GraphQLError,
+  GraphQLVariables,
+} from './graphql-client.js';

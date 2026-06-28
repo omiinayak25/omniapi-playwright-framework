@@ -111,6 +111,10 @@ export class ConfigManager {
         // that path per new URL() semantics — a classic baseURL pitfall.)
         openBrewery:
           process.env.OPEN_BREWERY_URL ?? 'https://api.openbrewerydb.org',
+        countriesGraphql:
+          process.env.COUNTRIES_GQL_URL ?? 'https://countries.trevorblades.com',
+        graphqlZero:
+          process.env.GRAPHQL_ZERO_URL ?? 'https://graphqlzero.almansi.me',
       },
       credentials: {
         username: process.env.BOOKER_USERNAME ?? 'admin',

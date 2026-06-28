@@ -32,6 +32,8 @@ export interface ApiEndpoints {
   readonly httpbin: string;
   readonly postmanEcho: string;
   readonly openBrewery: string;
+  readonly countriesGraphql: string;
+  readonly graphqlZero: string;
 }
 
 /** Demo credentials for the auth phases (public sandbox APIs only). */

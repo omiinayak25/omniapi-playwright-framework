@@ -28,7 +28,7 @@
  * =============================================================================
  */
 import { test as base, request as playwrightRequest } from '@playwright/test';
-import { ApiClient } from '../api-client/index.js';
+import { ApiClient, GraphQLClient } from '../api-client/index.js';
 import { config } from '../config/index.js';
 import {
   PostService,
@@ -58,6 +58,10 @@ export interface ApiFixtures {
   breweries: BreweryService;
   /** Raw client for DummyJSON (e.g. /users, for security tests). */
   dummyjson: ApiClient;
+  /** GraphQL client for the Countries API (queries/variables/fragments). */
+  countries: GraphQLClient;
+  /** GraphQL client for GraphQLZero (mutations). */
+  graphqlZero: GraphQLClient;
 }
 
 /**
@@ -122,6 +126,16 @@ export const test = base.extend<ApiFixtures>({
   },
   dummyjson: async ({}, use) => {
     await withClient(config.endpoints.dummyJson, 'dummyjson-raw', use);
+  },
+  countries: async ({}, use) => {
+    await withClient(config.endpoints.countriesGraphql, 'countries-gql', (c) =>
+      use(new GraphQLClient(c, '/')),
+    );
+  },
+  graphqlZero: async ({}, use) => {
+    await withClient(config.endpoints.graphqlZero, 'graphqlzero', (c) =>
+      use(new GraphQLClient(c, '/api')),
+    );
   },
 });
 
