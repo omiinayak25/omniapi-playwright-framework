@@ -30,7 +30,11 @@
 import { test as base, request as playwrightRequest } from '@playwright/test';
 import { ApiClient } from '../api-client/index.js';
 import { config } from '../config/index.js';
-import { PostService, ProductService } from '../services/index.js';
+import {
+  PostService,
+  ProductService,
+  BookingService,
+} from '../services/index.js';
 import { AuthService } from '../auth/index.js';
 
 /** The set of clients & repositories this fixture module injects into tests. */
@@ -47,6 +51,8 @@ export interface ApiFixtures {
   booker: ApiClient;
   /** Service that performs login flows to obtain tokens (Phase 4). */
   auth: AuthService;
+  /** Authenticated repository for Restful Booker /booking (Phase 7 chaining). */
+  bookings: BookingService;
 }
 
 /**
@@ -97,6 +103,11 @@ export const test = base.extend<ApiFixtures>({
   auth: async ({}, use) => {
     await withClient(config.endpoints.booker, 'booker-auth', (c) =>
       use(new AuthService(c)),
+    );
+  },
+  bookings: async ({}, use) => {
+    await withClient(config.endpoints.booker, 'bookings', (c) =>
+      use(new BookingService(c)),
     );
   },
 });

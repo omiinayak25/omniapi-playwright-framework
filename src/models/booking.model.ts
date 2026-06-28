@@ -31,6 +31,11 @@ export interface CreateBookingResponse {
   readonly booking: Booking;
 }
 
+/** An entry in GET /booking — the collection returns only id references. */
+export interface BookingIdRef {
+  readonly bookingid: number;
+}
+
 /** Booker's /auth response. */
 export interface AuthTokenResponse {
   readonly token: string;
