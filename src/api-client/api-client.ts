@@ -106,6 +106,7 @@ export class ApiClient {
       params,
       data,
       form,
+      multipart,
       timeout,
       auth,
       // Default false so 4xx/5xx are RETURNED (not thrown) — essential for
@@ -135,6 +136,7 @@ export class ApiClient {
       ...(params ? { params } : {}),
       ...(data !== undefined ? { data } : {}),
       ...(form ? { form } : {}),
+      ...(multipart ? { multipart } : {}),
       ...(timeout !== undefined ? { timeout } : {}),
     });
     const durationMs = Date.now() - start;

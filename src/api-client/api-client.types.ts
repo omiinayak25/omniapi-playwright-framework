@@ -14,6 +14,16 @@ import type { AuthStrategy } from '../auth/auth.types.js';
 /** Primitive values allowed in query strings and url-encoded form bodies. */
 export type QueryValue = string | number | boolean;
 
+/** A file part for a multipart upload (filename + MIME type + raw bytes). */
+export interface FilePayload {
+  readonly name: string;
+  readonly mimeType: string;
+  readonly buffer: Buffer;
+}
+
+/** A value in a multipart body: a scalar field or a file part. */
+export type MultipartValue = string | number | boolean | FilePayload;
+
 /**
  * Options accepted by every ApiClient verb. All optional — a bare GET needs none.
  * Mirrors the subset of Playwright's fetch options we expose, with clearer names.
@@ -30,6 +40,9 @@ export interface RequestOptions {
 
   /** application/x-www-form-urlencoded body (mutually exclusive with `data`). */
   readonly form?: Record<string, QueryValue>;
+
+  /** multipart/form-data body for file uploads (mutually exclusive with `data`). */
+  readonly multipart?: Record<string, MultipartValue>;
 
   /** Per-request timeout (ms). Falls back to the Playwright/config default. */
   readonly timeout?: number;
