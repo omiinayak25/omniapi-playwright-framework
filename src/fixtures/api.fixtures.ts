@@ -64,6 +64,8 @@ export interface ApiFixtures {
   breweries: BreweryService;
   /** Raw client for DummyJSON (e.g. /users, for security tests). */
   dummyjson: ApiClient;
+  /** Raw client for ReqRes (custom API example — API-key protected). */
+  reqres: ApiClient;
   /** GraphQL client for the Countries API (queries/variables/fragments). */
   countries: GraphQLClient;
   /** GraphQL client for GraphQLZero (mutations). */
@@ -136,6 +138,9 @@ export const test = base.extend<ApiFixtures>({
   },
   dummyjson: async ({}, use) => {
     await withClient(config.endpoints.dummyJson, 'dummyjson-raw', use);
+  },
+  reqres: async ({}, use) => {
+    await withClient(config.endpoints.reqres, 'reqres', use);
   },
   countries: async ({}, use) => {
     await withClient(config.endpoints.countriesGraphql, 'countries-gql', (c) =>
