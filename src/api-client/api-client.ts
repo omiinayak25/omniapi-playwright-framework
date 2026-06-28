@@ -125,6 +125,9 @@ export class ApiClient {
       `[${this.name}] → ${method} ${path}`,
       strategy ? { params, auth: strategy.scheme } : { params },
     );
+    // Full request body only at debug level (avoids noisy logs by default).
+    if (data !== undefined)
+      logger.debug(`[${this.name}] request body`, { data });
 
     const start = Date.now();
     const response = await this.context.fetch(path, {
@@ -147,6 +150,8 @@ export class ApiClient {
     logger.http(
       `[${this.name}] ← ${response.status()} ${method} ${path} (${durationMs}ms)`,
     );
+    // Full response body only at debug level.
+    logger.debug(`[${this.name}] response body`, { body: parsed.data });
 
     return {
       status: response.status(),

@@ -59,6 +59,10 @@ export default defineConfig({
     ['list'],
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['junit', { outputFile: 'test-results/junit-results.xml' }],
+    // Allure: rich, history-aware reporting (view with `npm run allure:report`).
+    ['allure-playwright', { resultsDir: 'allure-results' }],
+    // Our custom summary reporter (console block + test-results/summary.json).
+    ['./src/reporters/summary.reporter.ts'],
   ],
 
   // Settings inherited by the built-in `request` fixture in EVERY test.
